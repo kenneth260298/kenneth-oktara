@@ -1,0 +1,23 @@
+<div class="container">
+    <h1>Packages</h1>
+    <br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Package</th>
+                <th scope="col">Status</th>
+                <th scope="col">Detail</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="package in packages">
+                <td>{{package.name}}</td>
+                <td>Pending</td>
+                <td>
+                    <button type="button" class="btn btn-info">See details</button>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
