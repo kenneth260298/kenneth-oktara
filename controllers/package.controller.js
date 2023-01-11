@@ -16,7 +16,34 @@ const getPackages = async (req, res) => {
     }
 };
 
+const registerPackage = async (req, res) => {
+
+    try {
+        const package = await Package.create(req.body);
+        res.status(200).json({ package });
+    } catch (error) {
+        res.status(500).json({
+            errorMessage: 'Cannot register packages',
+            error
+        })
+    }
+};
+
+const deletePackage = async (req, res) => {
+    try {
+        await Package.findByIdAndDelete(req.params.packageId);
+        res.status(201).json({ message: "Deleted package" });
+    } catch (error) {
+        res.status(500).json({
+            errorMessage: 'Cannot delete the package',
+            error
+        })
+    }
+};
+
 
 module.exports = {
-    getPackages
+    getPackages,
+    registerPackage,
+    deletePackage
 }
