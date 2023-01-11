@@ -1,73 +1,82 @@
-<div ng-if="isLoading">
-    <div class="d-flex justify-content-center">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-    </div>
-</div>
-<br>
-<div ng-if="!isLoading" class="container">
-    <div class="row">
-        <div class="col-10">
-            <h1>Packages</h1>
-        </div>
-        <div class="col-2"> <!-- REGISTER PACKAGE BUTTON -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerPackageModal">
-                Register package
-            </button>
-        </div>
-    </div>
-    <!-- ADD PACKAGE MODAL -->
-    <div class="modal fade" id="registerPackageModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Register package</h1>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="packageName" class="form-label">Name</label>
-                        <input ng-model="package.name" type="text" class="form-control" id="packageName">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                        ng-click="registerPackage(package)">Register</button>
-                </div>
+<div ng-controller="packagesController as controller">
+    <div ng-if="isLoading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
     </div>
-    <!-- TABLE -->
-    <div ng-if="packages.length > 0" class="container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Package</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Details</th>
-                    <th scope="col">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="package in packages">
-                    <td>{{package.name}}</td>
-                    <td>Pending</td>
-                    <td>
-                        <button type="button" class="btn btn-success">See details</button>
-                    </td>
-                    <td>
-                        <button type="button" ng-click="deletePackage(package.id)"
-                            class="btn btn-danger">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div ng-if="packages.length==0">
-        <hr>
-        <div class="container">
-            <h1>NO PACKAGES</h1>
+    <br>
+    <div ng-if="!isLoading" class="container">
+        <div class="row">
+            <div class="col-10">
+                <h1>Packages</h1>
+            </div>
+            <div class="col-2"> <!-- REGISTER PACKAGE BUTTON -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#registerPackageModal">
+                    Register package
+                </button>
+            </div>
+        </div>
+        <!-- ADD PACKAGE MODAL -->
+        <div class="modal fade" id="registerPackageModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">Register package</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="packageName" class="form-label">Name</label>
+                            <input ng-model="package.name" type="text" class="form-control" id="packageName">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="packageName" class="form-label">Select a Location</label>
+                            <select ng-model="package.location" class="form-select">
+                                <option ng-repeat="location in locations" value="{{location.id}}">{{location.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                            ng-click="registerPackage(package)">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TABLE -->
+        <div ng-if="packages.length > 0" class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Package</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="package in packages">
+                        <td>{{package.name}}</td>
+                        <td>{{package.location.name}}</td>
+                        <td>{{package.status}}</td>
+                        <td>
+                            <button type="button" ng-click="deletePackage(package.id)"
+                                class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-if="packages.length==0">
+            <hr>
+            <div class="container">
+                <h1>NO PACKAGES</h1>
+            </div>
         </div>
     </div>
 </div>

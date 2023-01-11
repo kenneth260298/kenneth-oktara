@@ -1,3 +1,36 @@
-<div class="container">
-    <h1>Warehouse</h1>
+<div ng-controller="packagesController as controller">
+    <div ng-if="isLoading">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div ng-if="!isLoading" class="container">
+        <div class="col-10">
+            <h1>Locations</h1>
+        </div>
+        <!-- TABLE -->
+        <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Location</th>
+                        <th scope="col">Available</th>
+                        <th scope="col">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="location in allLocations">
+                        <td>{{location.name}}</td>
+                        <td>{{location.isAvailable ? 'Yes':'No'}}</td>
+                        <td>
+                            <button type="button" class="btn btn-success">See details</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

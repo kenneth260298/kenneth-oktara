@@ -1,9 +1,12 @@
 const Package = require("../models/Package");
+const Location = require("../models/Location");
+const Constants = require("../constants/packageStatus");
 
-const getPackages = async (req, res) => {
+
+const getPackages = async (_, res) => {
 
     try {
-        const packages = await Package.find();
+        const packages = await Package.find().populate('location');
 
         res.status(200).json({
             packages
@@ -17,10 +20,30 @@ const getPackages = async (req, res) => {
 };
 
 const registerPackage = async (req, res) => {
-
+    const { name, location } = req.body;
+    const newPackage = {
+        name,
+        location,
+        status: Constants.PENDING
+    };
     try {
-        const package = await Package.create(req.body);
-        res.status(200).json({ package });
+        //save package
+        const package = await Package.create(newPackage);
+
+        //update location status
+        const selectedLocation = await Location.findById(location);
+        selectedLocation.isAvailable = false;
+        await selectedLocation.save();
+
+        res.status(200).json({
+            package: {
+                ...package._doc,
+                location: {
+                    name: selectedLocation.name,
+                    id: selectedLocation.id,
+                }
+            }
+        });
     } catch (error) {
         res.status(500).json({
             errorMessage: 'Cannot register packages',
@@ -31,8 +54,12 @@ const registerPackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
     try {
-        await Package.findByIdAndDelete(req.params.packageId);
-        res.status(201).json({ message: "Deleted package" });
+        const package = await Package.findByIdAndDelete(req.params.packageId);
+        //update location status
+        const selectedLocation = await Location.findById(package.location);
+        selectedLocation.isAvailable = true;
+        await selectedLocation.save();
+        res.status(201).json({ message: "Deleted package", package });
     } catch (error) {
         res.status(500).json({
             errorMessage: 'Cannot delete the package',

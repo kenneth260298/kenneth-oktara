@@ -19,6 +19,7 @@ app.use(express.json());
 
 //Routes
 app.use('/api/packages', require('./routes/packages.routes'));
+app.use('/api/locations', require('./routes/locations.routes'));
 
 //Public Directory
 app.use(express.static('public/client'));
