@@ -9,14 +9,23 @@
     <br>
     <div ng-if="!isLoading" class="container">
         <div class="row">
-            <div class="col-10">
+            <div class="col-9">
                 <h1>Packages</h1>
             </div>
-            <div class="col-2"> <!-- REGISTER PACKAGE BUTTON -->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#registerPackageModal">
-                    Register package
-                </button>
+            <div class="col-3"> <!-- REGISTER PACKAGE BUTTON -->
+                <div class="row">
+                    <div class="col-6"><button type="button" class="btn btn-info" data-bs-toggle="modal"
+                            data-bs-target="#registerPackageModal">
+                            Ship packages
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#registerPackageModal">
+                            Register package
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- ADD PACKAGE MODAL -->
@@ -62,7 +71,7 @@
                 <tbody>
                     <tr ng-repeat="package in packages">
                         <td>{{package.name}}</td>
-                        <td>{{package.location.name}}</td>
+                        <td><a href="#!warehouse">{{package.location.name}}</a></td>
                         <td>{{package.status}}</td>
                         <td>
                             <button type="button" ng-click="deletePackage(package.id)"

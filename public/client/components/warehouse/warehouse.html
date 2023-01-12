@@ -1,4 +1,4 @@
-<div ng-controller="packagesController as controller">
+<div ng-controller="warehouseController as controller">
     <div ng-if="isLoading">
         <div class="d-flex justify-content-center">
             <div class="spinner-border" role="status">
@@ -8,9 +8,7 @@
     </div>
     <br>
     <div ng-if="!isLoading" class="container">
-        <div class="col-10">
-            <h1>Locations</h1>
-        </div>
+        <h1>Locations</h1>
         <!-- TABLE -->
         <div class="container">
             <table class="table">
@@ -24,13 +22,34 @@
                 <tbody>
                     <tr ng-repeat="location in allLocations">
                         <td>{{location.name}}</td>
-                        <td>{{location.isAvailable ? 'Yes':'No'}}</td>
+                        <td ng-if="location.isAvailable"><span class="badge text-bg-success">YES</span></td>
+                        <td ng-if="!location.isAvailable"><span class="badge text-bg-danger">NO</span></td>
                         <td>
-                            <button type="button" class="btn btn-success">See details</button>
+                            <button ng-if="location.name !== selectedName" type="button" class="btn btn-success"
+                                ng-click="setSelectedLocation(location)">Show</button>
+
+                            <button ng-if="location.name === selectedName" type="button" class="btn btn-danger"
+                                ng-click="clearSelectedLocation()">Hide</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
+    <!-- <div class="container">
+        <ng-map zoom="11" center="[9.886386568286781, -83.65709070217451]">
+            <marker ng-repeat="location in allLocations" position="{{[location.lat,location.lon]}}"
+                on-click="logData(location)" title="{{location.name}}">
+            </marker>
+            <directions draggable="false" panel="true" travel-mode="DRIVING" waypoint="lat,lon"
+                origin="9.886386568286781, -83.65709070217451" destination="9.911863661954115, -84.10108083835712">
+            </directions>
+        </ng-map>
+    </div> -->
+    <div class="container" ng-if="!!selectedLat && !!selectedLon">
+        <ng-map zoom="11" center="{{[selectedLat,selectedLon]}}">
+            <marker position="{{[selectedLat,selectedLon]}}" title="{{selectedName}}">
+            </marker>
+        </ng-map>
     </div>
 </div>

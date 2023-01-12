@@ -46,7 +46,7 @@ const registerPackage = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({
-            errorMessage: 'Cannot register packages',
+            errorMessage: 'Cannot register the package',
             error
         })
     }

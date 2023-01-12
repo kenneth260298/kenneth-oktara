@@ -6,6 +6,12 @@ const LocationSchema = Schema({
     },
     isAvailable: {
         type: Boolean
+    },
+    lat: {
+        type: Number
+    },
+    lon: {
+        type: Number
     }
 });
 

@@ -31,6 +31,7 @@ const getAllLocations = async (_, res) => {
     }
 };
 
+
 module.exports = {
     getAvailableLocations,
     getAllLocations
