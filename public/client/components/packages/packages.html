@@ -12,14 +12,10 @@
             <div class="col-9">
                 <h1>Packages</h1>
             </div>
-            <div class="col-3"> <!-- REGISTER PACKAGE BUTTON -->
+            <div class="col-3">
+                <!-- REGISTER PACKAGE BUTTON -->
                 <div class="row">
-                    <div class="col-6"><button type="button" class="btn btn-info" data-bs-toggle="modal"
-                            data-bs-target="#registerPackageModal">
-                            Ship packages
-                        </button>
-                    </div>
-                    <div class="col-6">
+                    <div class="col-12">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#registerPackageModal">
                             Register package
@@ -72,7 +68,10 @@
                     <tr ng-repeat="package in packages">
                         <td>{{package.name}}</td>
                         <td><a href="#!warehouse">{{package.location.name}}</a></td>
-                        <td>{{package.status}}</td>
+                        <td ng-if="package.status==='Pending'"><span
+                                class="badge text-bg-info">{{package.status}}</span></td>
+                        <td ng-if="package.status==='Delivered'"><span
+                                class="badge text-bg-success">{{package.status}}</span></td>
                         <td>
                             <button type="button" ng-click="deletePackage(package.id)"
                                 class="btn btn-danger">Delete</button>
@@ -81,10 +80,68 @@
                 </tbody>
             </table>
         </div>
+        <!-- NO PACKAGES INFO -->
         <div ng-if="packages.length==0">
             <hr>
             <div class="container">
                 <h1>NO PACKAGES</h1>
+            </div>
+        </div>
+        <!-- SHIP PACKAGES -->
+        <div class="container">
+            <div ng-if="pendingPackages.length !== 0">
+                <center>
+                    <button class=" btn btn-primary" type="button" data-bs-toggle="collapse"
+                        ng-click="getPendingPackages()" data-bs-target="#shippingCollapse" aria-expanded="false"
+                        aria-controls="shippingCollapse">
+                        Ship packages
+                    </button>
+                </center>
+            </div>
+            <div ng-if="pendingPackages.length>0" class="collapse" id="shippingCollapse">
+                <button ng-if="!isShipping" class="btn btn-danger" ng-click="startShipping()">
+                    Start shipping
+                </button>
+                <div ng-if="isShipping" class="spinner-border text-dark" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div ng-if="isShipping" class="mt-3">Delivered packages
+                    {{deliveredPackages}}/{{pendingPackages.length}}</div>
+                <div class="progress mt-3" role="progressbar" aria-label="Success example" aria-valuenow="{{progress}}"
+                    aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-success" ng-style="{width : ( progress + '%' ) }"></div>
+                </div>
+                <div class="mt-3">
+                    <ng-map zoom="11" center="[9.886386568286781, -83.65709070217451]">
+                        <!-- MAIN WAREHOUSE, THE PLACE WHERE THE TRUCK ALWAYS START THE ROUTE -->
+                        <marker position="{{[9.856067256932219,-83.62424455551471]}}" title="Main Warehouse">
+                        </marker>
+                        <!-- ALL PENDING LOCATIONS -->
+                        <marker ng-repeat="package in pendingPackages"
+                            position="{{[package.location.lat,package.location.lon]}}"
+                            title="{{package.location.name}}">
+                        </marker>
+                        <directions draggable="false" panel="true" travel-mode="DRIVING" waypoint="lat,lon"
+                            origin="9.856067256932219, -83.62424455551471"
+                            destination="{{pendingPackages[pendingPackages.length-1].location.lat}}, {{pendingPackages[pendingPackages.length-1].location.lon}}">
+                        </directions>
+                    </ng-map>
+                    <div class="mt-3">
+                        <center>
+                            <p> El camion siempre sale de la ubicacion [9.856067256932219, -83.62424455551471], que es
+                                donde
+                                se encuentra la bodega principal</p>
+                        </center>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="pendingPackages.length === 0">
+                <hr>
+                <center>
+                    <div class="container">
+                        <h1>NO PENDING PACKAGES</h1>
+                    </div>
+                </center>
             </div>
         </div>
     </div>

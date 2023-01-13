@@ -21,11 +21,15 @@ app.config(function ($routeProvider) {
 });
 
 //Controllers config
-app.controller(packagesController, function ($scope, $http) {
+app.controller(packagesController, function ($scope, $http, $interval) {
     //variables
     $scope.packages = [];
     $scope.locations = [];
     $scope.isLoading = true;
+    $scope.pendingPackages = [];
+    $scope.progress = 0;
+    $scope.isShipping = false;
+    $scope.deliveredPackages = 0;
 
     //functions
     $scope.registerPackage = function (package) {
@@ -42,8 +46,9 @@ app.controller(packagesController, function ($scope, $http) {
         }).then(function success(response) {
             package.name = "";
             $scope.isLoading = false;
-            $scope.packages = [...$scope.packages, response.data.package];//To prevent call the backend to update the package list
+            loadPackages();
             loadLocations();
+            loadPendingPackages();
         }, function error(response) {
             console.log("Error: app.controller", response);
             $scope.isLoading = false;
@@ -56,12 +61,53 @@ app.controller(packagesController, function ($scope, $http) {
             url: `${baseUrl}/packages/${packageId}`
         }).then(function success(_) {
             $scope.isLoading = false;
-            $scope.packages = $scope.packages.filter(({ id }) => id !== packageId);//To prevent call the backend to update the package list
+            loadPackages();
             loadLocations();
+            loadPendingPackages();
         }, function error(response) {
             console.log("Error: app.controller", response);
             $scope.isLoading = false;
         });
+    };
+
+    const updatePackageAndLocationData = (packageId, locationId) => {
+        $http({
+            method: 'POST',
+            url: `${baseUrl}/packages/updatePackageAndLocation`,
+            data: {
+                packageId,
+                locationId
+            }
+        }).then(function success(_) {
+            $scope.isLoading = false;
+        }, function error(response) {
+            console.log("Error: app.controller", response);
+            $scope.isLoading = false;
+        });
+    };
+
+    $scope.startShipping = function () {
+        $scope.isShipping = true;
+        stop = $interval(function () {
+
+            if ($scope.progress < 100) {
+                const selectedPackage = $scope.pendingPackages[$scope.deliveredPackages];
+                updatePackageAndLocationData(selectedPackage.id, selectedPackage.location._id);
+                $scope.progress += 100 / $scope.pendingPackages.length;
+                $scope.deliveredPackages++;
+            } else {
+                if (angular.isDefined(stop)) {
+                    $interval.cancel(stop);
+                    stop = undefined;
+                    $scope.isShipping = false;
+                    $scope.progress = 0;
+                    $scope.deliveredPackages = 0;
+                    loadLocations();
+                    loadPendingPackages();
+                }
+            }
+            loadPackages();
+        }, 2500);
     };
 
     //executions
@@ -91,8 +137,27 @@ app.controller(packagesController, function ($scope, $http) {
         $scope.isLoading = false;
     }));
 
+    const loadPendingPackages = () => ($http({
+        method: 'GET',
+        url: `${baseUrl}/packages/pending`
+    }).then(function success(response) {
+        $scope.pendingPackages = response.data.pendingPackages;
+        $scope.isLoading = false;
+
+    }, function error(response) {
+        console.log("Error: app.controller", response);
+        $scope.pendingPackages = [];
+        $scope.isLoading = false;
+    }));
+
+
+    $scope.getPendingPackages = function () {
+        loadPendingPackages();
+    }
+
     loadPackages();
     loadLocations();
+    loadPendingPackages();
 });
 
 app.controller(warehouseController, function ($scope, $http) {
@@ -102,7 +167,6 @@ app.controller(warehouseController, function ($scope, $http) {
     $scope.selectedLat = undefined;
     $scope.selectedLon = undefined;
     $scope.selectedName = undefined;
-
 
     $scope.logData = function (event, angularObj) {
         alert(calcCrow(9.899301561654815, -83.66851167133908, 9.893117686320961, -83.65785795269421).toFixed(1));

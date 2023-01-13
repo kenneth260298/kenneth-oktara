@@ -15,6 +15,7 @@ const getAvailableLocations = async (_, res) => {
         })
     }
 };
+
 const getAllLocations = async (_, res) => {
 
     try {

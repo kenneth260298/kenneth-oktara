@@ -52,6 +52,30 @@ const registerPackage = async (req, res) => {
     }
 };
 
+const updatePackageAndLocation = async (req, res) => {
+    const { packageId, locationId } = req.body;
+
+    try {
+        const selectedLocation = await Location.findById(locationId);
+        selectedLocation.isAvailable = true;
+
+        const selectedPackage = await Package.findById(packageId);
+        selectedPackage.status = Constants.DELIVERED;
+
+        await selectedLocation.save();
+        await selectedPackage.save();
+
+        res.status(200).json({
+            message: "Package and location updated"
+        });
+    } catch (error) {
+        res.status(500).json({
+            errorMessage: 'Cannot update the package and location',
+            error
+        })
+    }
+};
+
 const deletePackage = async (req, res) => {
     try {
         const package = await Package.findByIdAndDelete(req.params.packageId);
@@ -69,8 +93,27 @@ const deletePackage = async (req, res) => {
 };
 
 
+
+const getPendingPackages = async (_, res) => {
+
+    try {
+        const pendingPackages = await Package.find().populate('location').where('status').equals(Constants.PENDING);
+
+        res.status(200).json({
+            pendingPackages
+        })
+    } catch (error) {
+        res.status(500).json({
+            errorMessage: 'Cannot get pending packages',
+            error
+        })
+    }
+};
+
 module.exports = {
     getPackages,
     registerPackage,
-    deletePackage
+    deletePackage,
+    getPendingPackages,
+    updatePackageAndLocation
 }
