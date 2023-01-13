@@ -109,7 +109,8 @@
                     {{deliveredPackages}}/{{pendingPackages.length}}</div>
                 <div class="progress mt-3" role="progressbar" aria-label="Success example" aria-valuenow="{{progress}}"
                     aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar bg-success" ng-style="{width : ( progress + '%' ) }"></div>
+                    <div class="progress-bar bg-success" ng-style="{width : ( progress + '%' ) }">
+                        {{deliveredPackages}}/{{pendingPackages.length}}</div>
                 </div>
                 <div class="mt-3">
                     <ng-map zoom="11" center="[9.856067256932219,-83.62424455551471]">
