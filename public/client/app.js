@@ -92,7 +92,7 @@ app.controller(packagesController, function ($scope, $http, $interval) {
 
             if ($scope.progress < 100) {
                 const selectedPackage = $scope.pendingPackages[$scope.deliveredPackages];
-                updatePackageAndLocationData(selectedPackage.id, selectedPackage.location._id);
+                updatePackageAndLocationData(selectedPackage.id, selectedPackage.location.id);
                 $scope.progress += 100 / $scope.pendingPackages.length;
                 $scope.deliveredPackages++;
             } else {
@@ -181,26 +181,6 @@ app.controller(warehouseController, function ($scope, $http) {
         $scope.selectedLon = undefined;
         $scope.selectedName = undefined;
     }
-    //see https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates
-    //This function takes in latitude and longitude of two location and returns the distance between them as the crow flies (in km)
-    function calcCrow(lat1, lon1, lat2, lon2) {
-        var R = 6371; // km
-        var dLat = toRad(lat2 - lat1);
-        var dLon = toRad(lon2 - lon1);
-        var lat1 = toRad(lat1);
-        var lat2 = toRad(lat2);
-
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-        return d;
-    }
-    // Converts numeric degrees to radians
-    function toRad(Value) {
-        return Value * Math.PI / 180;
-    }
-
 
     //executions
     $http({

@@ -98,7 +98,7 @@
                     </button>
                 </center>
             </div>
-            <div ng-if="pendingPackages.length>0" class="collapse" id="shippingCollapse">
+            <div ng-if="pendingPackages.length !== 0" class="collapse" id="shippingCollapse">
                 <button ng-if="!isShipping" class="btn btn-danger" ng-click="startShipping()">
                     Start shipping
                 </button>
@@ -112,7 +112,7 @@
                     <div class="progress-bar bg-success" ng-style="{width : ( progress + '%' ) }"></div>
                 </div>
                 <div class="mt-3">
-                    <ng-map zoom="11" center="[9.886386568286781, -83.65709070217451]">
+                    <ng-map zoom="11" center="[9.856067256932219,-83.62424455551471]">
                         <!-- MAIN WAREHOUSE, THE PLACE WHERE THE TRUCK ALWAYS START THE ROUTE -->
                         <marker position="{{[9.856067256932219,-83.62424455551471]}}" title="Main Warehouse">
                         </marker>
@@ -122,15 +122,16 @@
                             title="{{package.location.name}}">
                         </marker>
                         <directions draggable="false" panel="true" travel-mode="DRIVING" waypoint="lat,lon"
-                            origin="9.856067256932219, -83.62424455551471"
+                            origin="9.856067256932219,-83.62424455551471"
                             destination="{{pendingPackages[pendingPackages.length-1].location.lat}}, {{pendingPackages[pendingPackages.length-1].location.lon}}">
                         </directions>
                     </ng-map>
                     <div class="mt-3">
                         <center>
-                            <p> El camion siempre sale de la ubicacion [9.856067256932219, -83.62424455551471], que es
-                                donde
-                                se encuentra la bodega principal</p>
+                            <p>
+                                <strong>El marcador (A) es la primera bodega, donde</strong>
+                                el camion siempre sale en la ubicacion [9.856067256932219, -83.62424455551471]
+                            </p>
                         </center>
                     </div>
                 </div>

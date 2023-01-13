@@ -1,10 +1,11 @@
 const Package = require("../models/Package");
 const Location = require("../models/Location");
-const Constants = require("../constants/packageStatus");
+const Constants = require("../constants/constants");
+const { calcDistance } = require("../helpers/calcDistance");
+const { compareDistance } = require("../helpers/compareDistance");
 
 
 const getPackages = async (_, res) => {
-
     try {
         const packages = await Package.find().populate('location');
 
@@ -98,9 +99,25 @@ const getPendingPackages = async (_, res) => {
 
     try {
         const pendingPackages = await Package.find().populate('location').where('status').equals(Constants.PENDING);
+        const packagesWithDistanceFromMainWarehouse = pendingPackages.map(package => {
+            const kmFromMainWarehouse =
+                +calcDistance(
+                    Constants.MAIN_WAREHOUSE_LOCATION.lat,
+                    Constants.MAIN_WAREHOUSE_LOCATION.lon,
+                    package._doc.location.lat,
+                    package._doc.location.lon
+                ).toFixed(1);
+
+            return {
+                id: package._doc._id,
+                ...package._doc,
+                kmFromMainWarehouse
+            }
+        });
+        const packagesSortedByDistance = packagesWithDistanceFromMainWarehouse.sort(compareDistance);//To get the best route to deliver the packages
 
         res.status(200).json({
-            pendingPackages
+            pendingPackages: packagesSortedByDistance
         })
     } catch (error) {
         res.status(500).json({
@@ -109,6 +126,7 @@ const getPendingPackages = async (_, res) => {
         })
     }
 };
+
 
 module.exports = {
     getPackages,
